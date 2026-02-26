@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Git & GitHub Master Quiz</title>
+    <style>
+      :root {
+        --bg-color: #121212;
+        --container-bg: #1e1e1e;
+        --text-color: #e0e0e0;
+        --accent-color: #00ff88;
+        --accent-hover: #00cc6a;
+        --border-color: #333;
+        --correct-color: #28a745;
+        --wrong-color: #dc3545;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: auto;
+        background: var(--container-bg);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--accent-color);
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+
+      .question-card {
+        background: #252525;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+
+      .question-title {
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #fff;
+      }
+
+      .options-list {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .option-item {
+        background: #2a2a2a;
+        margin-bottom: 10px;
+        padding: 12px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+      }
+
+      .option-item:hover {
+        background: #333;
+        border-color: var(--accent-color);
+      }
+
+      .option-item input[type="radio"] {
+        margin-right: 15px;
+        transform: scale(1.2);
+        cursor: pointer;
+      }
+
+      .explanation {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        background: #1a2a1a;
+        border-left: 4px solid var(--accent-color);
+        border-radius: 4px;
+        font-size: 0.95em;
+      }
+
+      .explanation.show {
+        display: block;
+      }
+
+      .correct {
+        background: rgba(40, 167, 69, 0.2) !important;
+        border-color: var(--correct-color) !important;
+      }
+
+      .wrong {
+        background: rgba(220, 53, 69, 0.2) !important;
+        border-color: var(--wrong-color) !important;
+      }
+
+      #submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #121212;
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+        margin-top: 30px;
+      }
+
+      #submit-btn:hover {
+        background-color: var(--accent-hover);
+      }
+
+      #result {
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-top: 20px;
+        color: var(--accent-color);
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🚀 Git & GitHub Master Quiz</h1>
+      <div id="quiz-container"></div>
+      <button id="submit-btn" onclick="checkAnswers()">
+        Nộp bài & Xem kết quả
+      </button>
+      <div id="result"></div>
+    </div>
+
+    <script>
+      const quizData = [
+        {
+          q: "Flow chuẩn xác nhất của kiến trúc 3 tầng trong Git khi bạn muốn lưu code là gì?",
+          opts: [
+            "Working Directory → Repository → Staging Area",
+            "Staging Area → Working Directory → Repository",
+            "Working Directory → Staging Area → Repository",
+            "Repository → Staging Area → Working Directory",
+          ],
+          ans: 2,
+          exp: "Đúng chuẩn: bạn gõ code ở Working Dir, đưa vào phòng chờ Staging Area bằng lệnh add, rồi chốt vào Repository bằng lệnh commit.",
+        },
+        {
+          q: "Bạn lỡ commit file config.json chứa mật khẩu lên Git. Lệnh nào giúp gỡ file này khỏi Git nhưng vẫn giữ nguyên trên máy tính?",
+          opts: [
+            "git rm config.json",
+            "git clean -f",
+            "git rm --cached config.json",
+            "git restore config.json",
+          ],
+          ans: 2,
+          exp: "Cờ --cached chỉ xóa file khỏi danh sách theo dõi (index/staging) của Git mà không chạm đến file thật trên ổ cứng.",
+        },
+        {
+          q: "Sự khác biệt cốt lõi khiến Rebase nguy hiểm hơn Merge khi làm việc nhóm là gì?",
+          opts: [
+            "Rebase chỉ áp dụng được cho nhánh main",
+            "Rebase không cho phép giải quyết conflict",
+            "Rebase tự động xóa các nhánh đã gộp",
+            "Rebase tạo ra các ID commit mới và viết lại lịch sử hoàn toàn",
+          ],
+          ans: 3,
+          exp: "Rebase thay đổi mã hash của các commit, làm xáo trộn lịch sử nếu các commit này đã được chia sẻ với đồng đội trên remote.",
+        },
+        {
+          q: "Bạn đang code dở tính năng mới nhưng cần sang nhánh khác fix bug khẩn cấp. Lệnh nào để cất tạm code, sau đó lấy ra dùng tiếp và xóa luôn bản nháp đó?",
+          opts: [
+            "git stash pop",
+            "git stash apply",
+            "git reset --soft",
+            "git restore",
+          ],
+          ans: 0,
+          exp: "Lệnh pop vừa áp dụng (apply) thay đổi vừa xóa (drop) bản nháp khỏi danh sách stash. (Lưu ý: git stash apply chỉ lấy code ra nhưng vẫn giữ bản nháp).",
+        },
+        {
+          q: "Lệnh nào giúp sửa nhanh message của commit cuối cùng mà không cần tạo commit mới?",
+          opts: [
+            "git commit --amend -m 'new message'",
+            "git reset --soft HEAD~1",
+            "git rebase -i HEAD~1",
+            "git commit -am 'new message'",
+          ],
+          ans: 0,
+          exp: "Cờ --amend cho phép đắp thêm code hoặc sửa lại lời nhắn của commit ngay trước đó.",
+        },
+        {
+          q: "Cờ (flag) nào trong cấu hình Git quyết định phạm vi cài đặt ảnh hưởng đến mọi repository của user hiện tại trên máy?",
+          opts: ["--system", "--local", "--global", "--all"],
+          ans: 2,
+          exp: "Mức --global áp dụng cho toàn bộ các dự án Git của user đang đăng nhập. (--system áp dụng cho mọi user, --local chỉ cho repo hiện tại).",
+        },
+        {
+          q: "Bạn vừa gõ nhầm lệnh reset nguy hiểm khiến code mất dấu. Lệnh nào giúp xem lại mọi thao tác để tìm đường quay về?",
+          opts: ["git reflog", "git log --oneline", "git status", "git diff"],
+          ans: 0,
+          exp: "Reflog (Reference logs) ghi lại lịch sử mọi sự di chuyển của con trỏ HEAD, giúp khôi phục cả những commit tưởng chừng đã mất.",
+        },
+        {
+          q: "Trong lúc xử lý Conflict, dấu hiệu nhận biết phần code của nhánh bạn đang đứng (ours) là gì?",
+          opts: [
+            ">>>>>>> branch_name",
+            "=======",
+            "||||||| merged",
+            "<<<<<<< HEAD",
+          ],
+          ans: 3,
+          exp: "Git sử dụng marker <<<<<<< HEAD để đánh dấu điểm bắt đầu đoạn code thuộc về nhánh hiện tại.",
+        },
+        {
+          q: "Lệnh git push -u origin feature-branch có tác dụng gì đặc biệt ở lần push đầu tiên?",
+          opts: [
+            "Ép buộc đẩy code lên đè mất code cũ",
+            "Upload toàn bộ nhánh local lên server",
+            "Thiết lập liên kết (upstream) giữa nhánh local và remote",
+            "Tự động merge code ngay sau khi đẩy",
+          ],
+          ans: 2,
+          exp: "Cờ -u (--set-upstream) giúp Git ghi nhớ mối liên kết, để lần sau chỉ cần git push hoặc git pull là xong.",
+        },
+        {
+          q: "Để gộp nhanh việc stage file đã tracked và commit trong một lệnh, bạn dùng cú pháp nào?",
+          opts: [
+            "git commit -m 'message'",
+            "git commit -am 'message'",
+            "git add commit -m 'message'",
+            "git commit -a",
+          ],
+          ans: 1,
+          exp: "Cờ -a (all) add các file đã tracked bị chỉnh sửa, -m để viết message. Không áp dụng cho file untracked mới.",
+        },
+        {
+          q: "Đặc điểm cốt lõi nào làm nên sự khác biệt của hệ thống quản lý phiên bản phân tán (Git) so với hệ thống tập trung (SVN)?",
+          opts: [
+            "Chỉ có một máy chủ duy nhất lưu trữ",
+            "Cần có kết nối mạng liên tục",
+            "Không cho phép tạo nhánh riêng lẻ",
+            "Mỗi máy tính đều chứa một bản sao hoàn chỉnh của repo",
+          ],
+          ans: 3,
+          exp: "Git cho phép lưu trữ toàn bộ lịch sử trên máy cá nhân, giúp việc code offline trở nên dễ dàng.",
+        },
+        {
+          q: "Lệnh nào giúp bạn kiểm tra danh sách toàn bộ các thiết lập cấu hình Git hiện tại trên máy?",
+          opts: [
+            "git config --list",
+            "git config --show",
+            "git log --config",
+            "git status",
+          ],
+          ans: 0,
+          exp: "Lệnh này in ra toàn bộ cấu hình từ các mức system, global đến local để rà soát.",
+        },
+        {
+          q: "Đối với người dùng macOS/Linux, cấu hình core.autocrlf nào nên được sử dụng?",
+          opts: ["true", "input", "false", "auto"],
+          ans: 1,
+          exp: "Các HĐH dựa trên Unix sử dụng chuẩn LF, thiết lập 'input' giúp Git tự động chuyển đổi CRLF sang LF khi commit.",
+        },
+        {
+          q: "Để bắt đầu theo dõi một thư mục dự án hoàn toàn mới bằng Git, bạn dùng lệnh nào?",
+          opts: ["git create", "git init", "git start", "git clone"],
+          ans: 1,
+          exp: "Lệnh này tạo ra thư mục ẩn .git bên trong dự án, biến nó thành một kho lưu trữ.",
+        },
+        {
+          q: "Bạn vừa gõ code nhưng chưa dùng lệnh git add. Lệnh nào giúp xem chi tiết những thay đổi CHƯA được đưa vào phòng chờ?",
+          opts: ["git diff", "git show", "git diff --staged", "git log -p"],
+          ans: 0,
+          exp: "git diff (không tham số) so sánh trực tiếp Working Directory và Staging Area.",
+        },
+        {
+          q: "Sau khi dùng lệnh add, làm sao để xem chi tiết thay đổi trước khi chính thức commit?",
+          opts: [
+            "git diff HEAD",
+            "git status -s",
+            "git diff",
+            "git diff --staged",
+          ],
+          ans: 3,
+          exp: "Cờ --staged (hoặc --cached) chỉ thị cho Git so sánh nội dung của Staging Area với commit cuối.",
+        },
+        {
+          q: "Cú pháp nào giúp in ra lịch sử commit dưới dạng một sơ đồ cây (graph) thu gọn trên một dòng?",
+          opts: [
+            "git log --oneline --graph",
+            "git log --tree",
+            "git status --graph",
+            "git log -p",
+          ],
+          ans: 0,
+          exp: "Hiển thị mã hash rút gọn, lời nhắn trên một dòng, kèm theo các đường kẻ mô phỏng sự phân nhánh.",
+        },
+        {
+          q: "Lệnh NGUY HIỂM nào vứt bỏ sạch mọi thay đổi của một file trong Working Directory, đưa nó về trạng thái y hệt commit cuối?",
+          opts: [
+            "git clean -f",
+            "git restore <file>",
+            "git rm <file>",
+            "git restore --staged <file>",
+          ],
+          ans: 1,
+          exp: "Lệnh này ghi đè trực tiếp lên file trên ổ cứng, làm mất vĩnh viễn các thay đổi chưa được lưu.",
+        },
+        {
+          q: "Lệnh nào xóa bỏ commit cuối đi nhưng VẪN GIỮ LẠI toàn bộ code ở Staging Area để add thêm file?",
+          opts: [
+            "git reset --hard HEAD~1",
+            "git revert HEAD",
+            "git commit --undo",
+            "git reset --soft HEAD~1",
+          ],
+          ans: 3,
+          exp: "Cờ --soft lùi lịch sử lại một bước nhưng nương tay giữ lại toàn bộ code đã chuẩn bị.",
+        },
+        {
+          q: "Trong quá trình dọn dẹp, lệnh git clean -fd đảm nhận nhiệm vụ gì?",
+          opts: [
+            "Dọn dẹp bộ nhớ đệm nội bộ",
+            "Xóa bỏ toàn bộ file và thư mục chưa được Git theo dõi (untracked)",
+            "Buộc xóa nhánh cứng đầu",
+            "Xóa bỏ file đã được theo dõi bị thay đổi",
+          ],
+          ans: 1,
+          exp: "Chữ f (force) ép buộc xóa file, d (directory) mở rộng phạm vi xóa cho cả các thư mục rác.",
+        },
+        {
+          q: "Làm sao để cấu hình tự động ngó lơ các file có đuôi .temp sinh ra trong dự án?",
+          opts: [
+            "Thêm ignore: *.temp vào .gitconfig",
+            "Thêm dòng *.temp vào file .gitignore",
+            "Dùng lệnh git rm --cached *.temp",
+            "Gõ lệnh git ignore *.temp",
+          ],
+          ans: 1,
+          exp: "Dấu hoa thị * là ký tự đại diện, giúp Git bỏ qua bất kỳ file nào kết thúc bằng .temp.",
+        },
+        {
+          q: "Lệnh Git chuẩn xác nhất để đổi tên file old.js thành new.js và tự động cập nhật vào phòng chờ là gì?",
+          opts: [
+            "git rename old.js new.js",
+            "git cp old.js new.js",
+            "mv old.js new.js",
+            "git mv old.js new.js",
+          ],
+          ans: 3,
+          exp: "Lệnh này thực hiện cả 2 việc: đổi tên file vật lý và ghi nhận đổi tên vào Staging Area.",
+        },
+        {
+          q: "Để tạo nhánh mới 'bug-fix' và nhảy sang nhánh đó làm việc chỉ bằng 1 câu lệnh?",
+          opts: [
+            "git switch bug-fix",
+            "git switch -c bug-fix",
+            "git branch bug-fix",
+            "git checkout -b bug-fix",
+          ],
+          ans: 1,
+          exp: "Cờ -c (create) kết hợp với switch tạo ra chuỗi thao tác tiện lợi nhất để khởi tạo và chuyển đổi. (Cách cũ là checkout -b).",
+        },
+        {
+          q: "Bạn muốn xóa bay một nhánh CHƯA merge vào main. Lệnh nào ép buộc (force) xóa nhánh này?",
+          opts: [
+            "git branch --remove <nhánh>",
+            "git branch -d <nhánh>",
+            "git rm branch <nhánh>",
+            "git branch -D <nhánh>",
+          ],
+          ans: 3,
+          exp: "Cờ -D in hoa tương đương với --delete --force, bỏ qua mọi cảnh báo mất mát dữ liệu.",
+        },
+        {
+          q: "Điểm khác biệt cốt lõi giữa git fetch và git pull là gì?",
+          opts: [
+            "Fetch tải về xem trước, Pull tải về và tự động gộp (merge)",
+            "Không có sự khác biệt",
+            "Fetch tự động xử lý xung đột, Pull yêu cầu thủ công",
+            "Pull dùng cho nhánh public, Fetch dùng nhánh cá nhân",
+          ],
+          ans: 0,
+          exp: "Fetch an toàn để kiểm tra code mới, trong khi Pull là tổ hợp lệnh mang tính thực thi gộp ngay lập tức.",
+        },
+        {
+          q: "Muốn cất đi cả những file MỚI TINH (untracked) bằng git stash, bạn dùng cờ nào?",
+          opts: [
+            "git stash -a",
+            "git stash --staged",
+            "git stash -u",
+            "git stash save",
+          ],
+          ans: 2,
+          exp: "Cờ -u (--include-untracked) sẽ gom mọi file rác, file mới tạo vào chung bản nháp.",
+        },
+        {
+          q: "Hành động hợp nhất nào TẠO RA một commit nối hoàn toàn mới, giữ nguyên vẹn cấu trúc rẽ nhánh ban đầu?",
+          opts: [
+            "git merge",
+            "git checkout",
+            "git pull --rebase",
+            "git rebase",
+          ],
+          ans: 0,
+          exp: "Thuật toán Merge sinh ra 'merge commit' gộp 2 điểm đầu mút lại, giữ nguyên tính đa tuyến tính của lịch sử.",
+        },
+        {
+          q: "Lệnh git rebase -i HEAD~3 cung cấp sức mạnh gì?",
+          opts: [
+            "Tự động gộp 3 commit cuối thành 1",
+            "Hủy bỏ 3 commit cuối an toàn",
+            "Tải nội dung 3 commit mới từ server đè lên máy",
+            "Mở giao diện tương tác cho phép chỉnh sửa, đổi tên, gộp 3 commit gần nhất",
+          ],
+          ans: 3,
+          exp: "Thủ thuật rất mạnh để 'làm sạch' các commit rác trước khi đẩy code lên remote.",
+        },
+        {
+          q: "Bạn muốn hủy bỏ toàn bộ quá trình merge đang bị conflict để đưa file về trạng thái an toàn lúc trước. Lệnh nào giúp bạn?",
+          opts: [
+            "git reset --hard HEAD",
+            "git merge --abort",
+            "git rebase --abort",
+            "git merge --cancel",
+          ],
+          ans: 1,
+          exp: "Nút thoát hiểm dọn sạch mọi dấu hiệu xung đột và trả lại cấu trúc thư mục y như lúc chưa gõ lệnh merge.",
+        },
+        {
+          q: "Khi giải quyết Conflict, muốn lấy 100% code từ nhánh của đối tác đè lên file của mình, bạn dùng lệnh nào?",
+          opts: [
+            "git resolve --theirs <file>",
+            "git accept incoming <file>",
+            "git checkout --ours <file>",
+            "git checkout --theirs <file>",
+          ],
+          ans: 3,
+          exp: "Cờ --theirs báo hiệu bạn chấp nhận toàn bộ mã nguồn của luồng dữ liệu đang được đẩy vào (incoming branch).",
+        },
+      ];
+
+      const container = document.getElementById("quiz-container");
+
+      // Render questions
+      quizData.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "question-card";
+
+        const title = document.createElement("div");
+        title.className = "question-title";
+        title.innerText = `Câu ${index + 1}: ${item.q}`;
+        card.appendChild(title);
+
+        const list = document.createElement("ul");
+        list.className = "options-list";
+
+        item.opts.forEach((opt, optIndex) => {
+          const li = document.createElement("li");
+          li.className = "option-item";
+
+          const label = document.createElement("label");
+          label.style.width = "100%";
+          label.style.cursor = "pointer";
+          label.style.display = "flex";
+          label.style.alignItems = "center";
+
+          const radio = document.createElement("input");
+          radio.type = "radio";
+          radio.name = `q${index}`;
+          radio.value = optIndex;
+
+          label.appendChild(radio);
+          label.appendChild(document.createTextNode(opt));
+          li.appendChild(label);
+          list.appendChild(li);
+        });
+
+        card.appendChild(list);
+
+        const expDiv = document.createElement("div");
+        expDiv.className = "explanation";
+        expDiv.id = `exp-${index}`;
+        expDiv.innerHTML = `<strong>Giải thích:</strong> ${item.exp}`;
+        card.appendChild(expDiv);
+
+        container.appendChild(card);
+      });
+
+      function checkAnswers() {
+        let score = 0;
+
+        quizData.forEach((item, index) => {
+          const selected = document.querySelector(
+            `input[name="q${index}"]:checked`,
+          );
+          const options = document.getElementsByName(`q${index}`);
+          const expDiv = document.getElementById(`exp-${index}`);
+
+          // Highlight answers
+          options.forEach((opt, optIndex) => {
+            const liItem = opt.closest(".option-item");
+            // Disable choices after submit
+            opt.disabled = true;
+
+            if (optIndex === item.ans) {
+              liItem.classList.add("correct");
+            } else if (opt.checked && optIndex !== item.ans) {
+              liItem.classList.add("wrong");
+            }
+          });
+
+          if (selected && parseInt(selected.value) === item.ans) {
+            score++;
+          }
+
+          // Show explanation
+          expDiv.classList.add("show");
+        });
+
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+        resultDiv.innerText = `🎯 Bạn đã trả lời đúng ${score} / ${quizData.length} câu!`;
+
+        document.getElementById("submit-btn").style.display = "none";
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    </script>
+  </body>
+</html>
