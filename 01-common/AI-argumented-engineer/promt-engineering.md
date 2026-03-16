@@ -29,16 +29,16 @@ Một prompt chuyên nghiệp thường bao gồm các thành phần sau:
 **Nguyên tắc 1: Rõ ràng và cụ thể (Be Specific)**
 
 ```
-❌ Kém: "Giải thích về database"
-✅ Tốt: "Giải thích sự khác biệt giữa OLTP và OLAP database,
+Kém: "Giải thích về database"
+Tốt: "Giải thích sự khác biệt giữa OLTP và OLAP database,
          bao gồm use case, kiến trúc và ví dụ cụ thể cho từng loại"
 ```
 
 **Nguyên tắc 2: Cung cấp ngữ cảnh đầy đủ (Provide Context)**
 
 ```
-❌ Kém: "Code bị lỗi, sửa giúp tôi"
-✅ Tốt: "Đoạn code Python dưới đây dùng pandas để đọc file CSV 2GB
+Kém: "Code bị lỗi, sửa giúp tôi"
+Tốt: "Đoạn code Python dưới đây dùng pandas để đọc file CSV 2GB
          nhưng gặp lỗi MemoryError trên máy 8GB RAM. Hãy tối ưu
          bằng cách sử dụng chunked reading hoặc Dask:
          [đoạn code]"
@@ -79,7 +79,7 @@ Tóm tắt trong 3 bullet points chính.
 
 **Nguyên tắc 6: Cung cấp ví dụ mẫu (Provide Examples)**
 
-Cho AI thấy output mong muốn thông qua ví dụ cụ thể (xem thêm phần Few-shot Prompting bên dưới).
+Cho AI thấy output mong muốn thông qua ví dụ cụ thể
 
 ### 1.4. Các lỗi thường gặp khi viết Prompt
 
@@ -161,12 +161,12 @@ Chain-of-Thought yêu cầu mô hình **trình bày quá trình suy luận từn
 **So sánh có và không có CoT:**
 
 ```
-❌ Không có CoT:
+Không có CoT:
 Prompt: "Một pipeline xử lý 1000 records/phút. Nếu có 5 triệu records
          và 3 worker nodes chạy song song, mất bao lâu để hoàn thành?"
 Output: "1667 phút" (có thể sai, không thể kiểm chứng logic)
 
-✅ Có CoT:
+Có CoT:
 Prompt: "Một pipeline xử lý 1000 records/phút. Nếu có 5 triệu records
          và 3 worker nodes chạy song song, mất bao lâu để hoàn thành?
          Hãy giải thích từng bước suy luận."
@@ -388,12 +388,10 @@ Nếu tài liệu không đề cập đến câu hỏi nào, hãy ghi rõ
 
 ## Nguồn tham khảo
 
-> Nội dung tài liệu này được tổng hợp và biên soạn bởi **GitHub Copilot (Claude)** dựa trên kiến thức chung về Prompt Engineering, kết hợp các nguồn tham khảo chính sau:
+> Nội dung tài liệu này được tổng hợp và biên soạn dựa trên kiến thức chung về Prompt Engineering, kết hợp các nguồn tham khảo chính sau:
 >
 > 1. **OpenAI — Prompt Engineering Guide**: https://platform.openai.com/docs/guides/prompt-engineering
 > 2. **Google — Prompt Engineering for Generative AI**: https://cloud.google.com/vertex-ai/docs/generative-ai/learn/introduction-prompt-design
 > 3. **Wei et al. (2022)** — _"Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"_: https://arxiv.org/abs/2201.11903
 > 4. **Brown et al. (2020)** — _"Language Models are Few-Shot Learners"_ (GPT-3 paper): https://arxiv.org/abs/2005.14165
 > 5. **Anthropic — Prompt Engineering Documentation**: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering
->
-> Các ví dụ minh họa trong tài liệu được thiết kế riêng cho ngữ cảnh **Data Engineering** và không trích dẫn trực tiếp từ nguồn nào cụ thể.
