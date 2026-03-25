@@ -141,7 +141,7 @@ Ngoài `w` và `b`, nên nhớ thêm:
 - `G`: về cuối file
 - `5G`: nhảy tới dòng số 5
 
-## Mini cheatsheet ghép lệnh
+## Cheatsheet
 
 Một vài ví dụ để nhớ công thức `[Số lượng] + [Động từ] + [Đối tượng]`:
 
